@@ -76,6 +76,11 @@ var _upldr = function(){
 			
 			var f = files[i];
 			reader.name = f.name;
+			if(getSlug){
+				var str = f.name.split('.');
+				str[0] = getSlug(str[0]);
+				reader.name = str.join('.');
+			}
 			reader.type = f.type;
 			// file size from bytes to KB:
 			reader.size = (f.size / 1000).toFixed(2);

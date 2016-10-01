@@ -1,5 +1,6 @@
 var _upldr = function(){
-	options = {
+	
+	this.options = {
 		'target' : "gallery/fileUpload.php",
 		'typeMatch' : 'image.*',
 		'cbReaderOnload' : function(){
@@ -9,7 +10,8 @@ var _upldr = function(){
 			document.getElementById('file-table-body').innerHTML = "";
 		}	
 	};
-	
+	var options = this.options;
+	console.log(options.typeMatch);
 	
 	this.set = function(data){
 		if(data){
@@ -70,31 +72,19 @@ var _upldr = function(){
 		ftb.innerHTML = "";
 
 		for (var i = 0; i < files.length; i++) {
-			var f = files[i];
-			var fName = f.name;
-			var fType = f.type;
-			// file size from bytes to KB:
-			var fSize = (f.size / 1000).toFixed(2);
-			//var fLastMod = f.lastModified;
-			var fLastMod = f.lastModifiedDate.toLocaleDateString();
-
 			var reader = new FileReader();
+			
+			var f = files[i];
+			reader.name = f.name;
+			reader.type = f.type;
+			// file size from bytes to KB:
+			reader.size = (f.size / 1000).toFixed(2);
+			//var fLastMod = f.lastModified;
+			reader.lastMod = f.lastModifiedDate.toLocaleDateString();
+			
 			reader.onload = function(e) {
-
 				var src = e.target.result;
-				
-				options.cbReaderOnload(src, fName, fType, fSize, fLastMod);
-				
-				/*
-				prototype({
-					'template' : '.file-row-prototype',
-					'selectors' : ['src', 'name', 'type', 'size', 'lastMod'],
-					'values' : [src, fName, fType, fSize, fLastMod],
-					//				'selectors' : ['name','type','size','lastMod'],
-					//				'values' : [fName,fType,fSize,fLastMod],
-					'targets' : '#file-table-body'
-				});
-				*/
+				options.cbReaderOnload(src, this.name, this.type, this.size, this.lastMod);
 			};
 			reader.readAsDataURL(f);
 		}
@@ -165,19 +155,20 @@ var _upldr = function(){
 			//if (request.readyState == 4) {
 			try {
 				var resp = JSON.parse(request.response);
-				console.log(request.response);
 			} catch (e) {
+				/*
 				var resp = {
 					status : 'error',
 					data : 'Unknown error occurred: [' + request.responseText + ']'
 				};
+				*/
 			}
-			console.log(resp.status + ': ' + resp.data);
+			//console.log(resp.status + ': ' + resp.data);
 			//}
 		};
 
 		request.onloadend = function(e) {
-			console.log(e.target.response);
+			//console.log(e.target.response);
 			if(options.cbOnloadend){
 				options.cbOnloadend(e);	
 			}
